@@ -29,16 +29,18 @@
 - weight, тип float — вес спортсмена.
 
 Методы классов, которые отвечают за обработку данных:
-- расчёт дистанции, которую пользователь преодолел за тренировку: get_distance();
+- расчёт дистанции, которую пользователь преодолел за тренировку get_distance()
 - расчёт средней скорости движения во время тренировки: get_mean_speed();
 - расчёт количества потраченных калорий за тренировку: get_spent_calories();
 - создание объекта сообщения о результатах тренировки: show_training_info().
 """
 
+
 class InfoMessage:
     # Класс для создания объектов сообщений.
     # get_message() - метод для вывода сообщений на экран.
-    # Объекты этого класса создаются вызовом метода show_training_info() для классов тренировок.
+    # Объекты этого класса создаются вызовом метода show_training_info()
+    # для классов тренировок.
     """Информационное сообщение о тренировке."""
     def __init__(self,
                  training_type: str,
@@ -51,15 +53,18 @@ class InfoMessage:
         self.training_type: str = training_type
         # длительность тренировки в часах
         self.duration: float = duration
-        # дистанция в километрах, которую преодолел пользователь за время тренировки
+        # дистанция в километрах, которую преодолел пользователь
+        # за время тренировки
         self.distance: float = distance
         # средняя скорость, с которой двигался пользователь
         self.speed: float = speed
-        # количество килокалорий, которое израсходовал пользователь за время тренировки
+        # количество килокалорий, которое израсходовал пользователь
+        # за время тренировки
         self.calories: float = calories
 
     # возвращает строку сообщения
-    # числовые значения округляются при выводе до тысячных долей с помощью format specifier
+    # числовые значения округляются при выводе до тысячных долей с помощью
+    # format specifier
     # .3f обозначает фиксированные 3 знака после запятой
     def get_message(self) -> str:
         """Метод возвращает строку сообщения"""
@@ -96,16 +101,18 @@ class Training:
         # вес спортсмена
         self.weight: float = weight
 
-    # возвращает дистанцию (в километрах), которую преодолел пользователь за время тренировки.
+    # возвращает дистанцию (в километрах), которую преодолел пользователь
+    # за время тренировки.
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
         # формула из задания - action * LEN_STEP / M_IN_KM
         return self.action * self.LEN_STEP / self.M_IN_KM
 
-    # возвращает значение средней скорости движения во время тренировки (в км/ч).
+    # возвращает значение средней скорости движения во время тренировки в км/ч
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
-        # формула из задания - преодоленная_дистанция_за_тренировку / время_тренировки
+        # формула из задания
+        # преодоленная_дистанция_за_тренировку / время_тренировки
         return self.get_distance() / self.duration
 
     # расчёт количества потраченных калорий за тренировку
@@ -125,7 +132,9 @@ class Training:
                            self.get_spent_calories()
                            )
 
-# Все свойства и методы класса `Running` без изменений наследуются от базового класса.
+
+# Все свойства и методы класса `Running` без изменений
+# наследуются от базового класса.
 # Исключение составляет только метод расчёта калорий, он переопределён.
 class Running(Training):
     """Тренировка: бег."""
@@ -136,9 +145,11 @@ class Running(Training):
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
         # формула из задания
-        # (18 * средняя_скорость - 20) * вес_спортсмена / M_IN_KM * время_тренировки_в_минутах
-        return ((self.coeff_calorie_1 * self.get_mean_speed() - self.coeff_calorie_2)
-                * self.weight / self.M_IN_KM * self.duration * self.TIME_CONST)
+        # (18 * средняя_скорость - 20) * вес_спортсмена / M_IN_KM
+        # * время_тренировки_в_минутах
+        return ((self.coeff_calorie_1 * self.get_mean_speed()
+                - self.coeff_calorie_2) * self.weight
+                / self.M_IN_KM * self.duration * self.TIME_CONST)
 
 
 # Конструктор этого класса `SportsWalking` принимает
@@ -150,27 +161,30 @@ class SportsWalking(Training):
     coeff_calorie_1 = 0.035
     coeff_calorie_2 = 0.029
 
-    def __init__(self,
+    def __init__(
+            self,
             action: int,
             duration: float,
             weight: float,
-            height: float,
-            ) -> None:
+            height: float) -> None:
         super().__init__(action, duration, weight)
-        # Конструктор этого класса принимает дополнительный параметр height — рост спортсмена
+        # Конструктор этого класса принимает дополнительный параметр
+        # height — рост спортсмена
         self.height: float = height
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
         # формула из задания
-        # (0.035 * вес + (средняя_скорость**2 // рост) * 0.029 * вес) * время_тренировки_в_минутах
+        # (0.035 * вес + (средняя_скорость**2 // рост) * 0.029 * вес)
+        # * время_тренировки_в_минутах
         return ((self.coeff_calorie_1
                 * self.weight
                 + (self.get_mean_speed() ** 2 // self.height)
                 * self.coeff_calorie_2 * self.weight)
                 * self.TIME_CONST * self.duration)
 
-# Конструктор класса `Swimming`, кроме свойств базового класса, принимает еще два параметра:
+# Конструктор класса `Swimming`, кроме свойств базового класса,
+# принимает еще два параметра:
 # - length_pool — длина бассейна в метрах;
 # - count_pool — сколько раз пользователь переплыл бассейн.
 # Переопределёны методы:
@@ -178,6 +192,8 @@ class SportsWalking(Training):
 # - get_mean_speed()- рассчитывает среднюю скорость
 # Переопределен параметр, атрибут базового класса LEN_STEP, потому что
 # расстояние преодолеваемое за один гребок, отличается от длины шага.
+
+
 class Swimming(Training):
     """Тренировка: плавание."""
 
@@ -186,14 +202,15 @@ class Swimming(Training):
     coeff_calorie_1 = 1.1
     coeff_calorie_2 = 2
 
-    # Конструктор класса Swimming, кроме свойств базового класса, принимает еще два параметра
-    def __init__(self,
+    # Конструктор класса Swimming, кроме свойств базового класса,
+    # принимает еще два параметра
+    def __init__(
+            self,
             action: int,
             duration: float,
             weight: float,
-            length_pool: float, # длина бассейна в метрах
-            count_pool: float,  # сколько раз пользователь переплыл бассейн
-            ) -> None:
+            length_pool: float,         # длина бассейна в метрах
+            count_pool: float) -> None:
         super().__init__(action, duration, weight)
         self.length_pool: float = length_pool
         self.count_pool: float = count_pool
@@ -202,16 +219,20 @@ class Swimming(Training):
         """Получить среднюю скорость движения."""
         # формула из задания
         # длина_бассейна * count_pool / M_IN_KM / время_тренировки
-        return self.length_pool * self.count_pool / self.M_IN_KM / self.duration
+        return (self.length_pool * self.count_pool
+                / self.M_IN_KM / self.duration)
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
         # формула из задания
         # (средняя_скорость + 1.1) * 2 * вес
-        return (self.get_mean_speed() + self.coeff_calorie_1) * self.coeff_calorie_2 * self.weight
+        return ((self.get_mean_speed() + self.coeff_calorie_1)
+                * self.coeff_calorie_2 * self.weight)
 
-# Функция read_package() принимает на вход код тренировки и список её параметров
-# теле функции словарь, который сопоставляет коды тренировок и классы,
+
+# Функция read_package() принимает на вход код тренировки
+# и список её параметров
+# В теле функции словарь, который сопоставляет коды тренировок и классы,
 # которые нужно вызвать для каждого типа тренировки
 # Функция определяет тип тренировки и создаёт объект соответствующего класса,
 # передав ему на вход параметры, полученные во втором аргументе.
@@ -227,10 +248,13 @@ def read_package(workout_type: str, data: list) -> Training:
         raise ValueError(f"Такой тренировки - {workout_type}, не найдено")
     return workout[workout_type](*data)
 
+
 # Функция main() принимает на вход экземпляр класса `Training`.
 # для этого экземпляра вызван метод show_training_info()
-# результат выполнения метода - объект класса InfoMessage, сохранённый в переменную info.
-# Для объекта InfoMessage, сохранённого в переменной info, вызван метод get_message(),
+# результат выполнения метода - объект класса InfoMessage,
+# сохранённый в переменную info.
+# Для объекта InfoMessage, сохранённого в переменной info,
+# вызван метод get_message(),
 # который возвращает строку сообщения с данными о тренировке
 def main(training: Training) -> None:
     """Главная функция."""
