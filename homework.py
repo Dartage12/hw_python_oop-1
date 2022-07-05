@@ -1,43 +1,33 @@
+from dataclasses import dataclass, asdict
+from typing import Dict, Type, ClassVar
+
+
+@dataclass
 class InfoMessage:
     """
     Класс для создания объектов сообщений.
     Информационное сообщение о тренировке.
     """
 
-    # get_message() - метод для вывода сообщений на экран.
-    # Объекты этого класса создаются вызовом метода show_training_info()
-    # для классов тренировок.
-    def __init__(self,
-                 training_type: str,
-                 duration: float,
-                 distance: float,
-                 speed: float,
-                 calories: float,
-                 ) -> None:
-        # имя класса тренировки
-        self.training_type: str = training_type
-        # длительность тренировки в часах
-        self.duration: float = duration
-        # дистанция в километрах, которую преодолел пользователь
-        # за время тренировки
-        self.distance: float = distance
-        # средняя скорость, с которой двигался пользователь
-        self.speed: float = speed
-        # количество килокалорий, которое израсходовал пользователь
-        # за время тренировки
-        self.calories: float = calories
+    training_type: str  # Название тренировки
+    duration: float     # Длительность (в часах)
+    distance: float     # Дистанция в (в км)
+    speed: float        # Скорость (в км/ч)
+    calories: float     # Килокалории
+    message: str = ('Тип тренировки: {training_type}; '
+                    'Длительность: {duration:.3f} ч.; '
+                    'Дистанция: {distance:.3f} км; '
+                    'Ср. скорость: {speed:.3f} км/ч; '
+                    'Потрачено ккал: {calories:.3f}.')
 
     # числовые значения округляются при выводе до тысячных долей с помощью
     # format specifier (.3f)
     def get_message(self) -> str:
         """Метод возвращает строку сообщения"""
-        return (f"Тип тренировки: {self.training_type}; "
-                f"Длительность: {self.duration:.3f} ч.; "
-                f"Дистанция: {self.distance:.3f} км; "
-                f"Ср. скорость: {self.speed:.3f} км/ч; "
-                f"Потрачено ккал: {self.calories:.3f}.")
+        return self.message.format(**asdict(self))
 
 
+@dataclass
 class Training:
     # Каждый класс, описывающий определённый вид тренировки, будет
     # дополнять и расширять этот базовый класс.
@@ -52,20 +42,15 @@ class Training:
     """
 
     # расстояние, которое спортсмен преодолевает
-    LEN_STEP: float = 0.65
+    LEN_STEP: ClassVar[float] = 0.65
     # константа для перевода значений из метров в километры.
-    M_IN_KM: float = 1000
+    M_IN_KM: ClassVar[float] = 1000
     # константа для перевода времени.
-    TIME_CONST = 60
+    TIME_CONST: ClassVar[float] = 60
 
-    def __init__(self,
-                 action: int,
-                 duration: float,
-                 weight: float,
-                 ) -> None:
-        self.action: int = action
-        self.duration: float = duration
-        self.weight: float = weight
+    action: int         # Действие
+    duration: float     # Продолжительность
+    weight: float       # Вес
 
     def get_distance(self) -> float:
         """
@@ -85,7 +70,7 @@ class Training:
     # в зависимости от тренировки
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        raise NotImplementedError("Требуется определить метод для калорий")
+        raise NotImplementedError("Требуется определить get_spent_calories()")
 
     def show_training_info(self) -> InfoMessage:
         """
@@ -100,11 +85,12 @@ class Training:
                            )
 
 
+@dataclass
 class Running(Training):
     """Тренировка: бег."""
 
-    coeff_calorie_1 = 18
-    coeff_calorie_2 = 20
+    coeff_calorie_1: ClassVar[float] = 18
+    coeff_calorie_2: ClassVar[float] = 20
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
@@ -113,26 +99,21 @@ class Running(Training):
                 / self.M_IN_KM * self.duration * self.TIME_CONST)
 
 
+@dataclass
 class SportsWalking(Training):
     """
     Тренировка: спортивная ходьба.
     Дополнительный параметр height — рост спортсмена
     """
 
-    coeff_calorie_1 = 0.035
-    coeff_calorie_2 = 0.029
-    coeff_calorie_3 = 2
+    coeff_calorie_1: ClassVar[float] = 0.035
+    coeff_calorie_2: ClassVar[float] = 0.029
+    coeff_calorie_3: ClassVar[float] = 2
 
-    def __init__(
-            self,
-            action: int,
-            duration: float,
-            weight: float,
-            height: float) -> None:
-        super().__init__(action, duration, weight)
-        # Конструктор этого класса принимает дополнительный параметр
-        # height — рост спортсмена
-        self.height: float = height
+    action: int         # Действие
+    duration: float     # Продолжительность
+    weight: float       # Вес
+    height: float       # Рост
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
@@ -144,6 +125,7 @@ class SportsWalking(Training):
                 * self.TIME_CONST * self.duration)
 
 
+@dataclass
 class Swimming(Training):
     """
     Тренировка: плавание.
@@ -161,21 +143,15 @@ class Swimming(Training):
     """
 
     # расстояние, которое спортсмен преодолевает за один гребок 1.38 метра
-    LEN_STEP: float = 1.38
-    coeff_calorie_1 = 1.1
-    coeff_calorie_2 = 2
+    LEN_STEP: ClassVar[float] = 1.38
+    coeff_calorie_1: ClassVar[float] = 1.1
+    coeff_calorie_2: ClassVar[float] = 2
 
-    # __init__ принимает еще два параметра
-    def __init__(
-            self,
-            action: int,
-            duration: float,
-            weight: float,
-            length_pool: float,
-            count_pool: float) -> None:
-        super().__init__(action, duration, weight)
-        self.length_pool: float = length_pool
-        self.count_pool: float = count_pool
+    action: int         # Действие
+    duration: float     # Продолжительность
+    weight: float       # Вес
+    length_pool: float  # Длина
+    count_pool: float   # Количество
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
@@ -196,12 +172,23 @@ class Swimming(Training):
 # передав ему на вход параметры, полученные во втором аргументе.
 # Функция возвращает этот объект.
 def read_package(workout_type: str, data: list) -> Training:
-    """Прочитать данные полученные от датчиков."""
-    workout: dict = {
+    """
+    Прочитать данные полученные от датчиков.
+
+    Входные параметры:
+    - Словарь из двух параметров
+        - Строка с кодом тренировки
+        - Класс обработчик тренировки
+
+    Возвращает:
+    - Объект класса тренировки
+    """
+    workout: Dict[str, Type[Training]] = {
         'SWM': Swimming,
         'RUN': Running,
         'WLK': SportsWalking
     }
+
     if workout_type not in workout:
         raise ValueError(f"Такой тренировки - {workout_type}, не найдено")
     return workout[workout_type](*data)
